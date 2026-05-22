@@ -1,4 +1,4 @@
-# Phishing Simulation and Detection Lab
+# Email Phishing Simulation and Detection Lab
 
 ![Security](https://img.shields.io/badge/Category-Cybersecurity-red)
 ![Level](https://img.shields.io/badge/Level-Intermediate-orange)
