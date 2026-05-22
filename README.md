@@ -364,19 +364,22 @@ C:\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf
 
 ```ini
 [WinEventLog://Microsoft-Windows-Sysmon/Operational]
-index = sysmon
+index = sysmon_index
 sourcetype = XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
 disabled = false
+renderXml = true
 
 [WinEventLog://Security]
-index = windws
-sourcetype = WinEventLog:Security
-disabled = false
+index = windws_index
+disabled = 0
 
 [WinEventLog://Application]
-index = widws
-sourcetype = WinEventLog:Application
-disabled = false
+index = widws_index
+disabled = 0
+
+[WinEventLog://System]
+index = widws_index
+disabled = 0
 ```
 
 **Step 3: Restart forwarder:**
