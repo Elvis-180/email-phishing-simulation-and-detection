@@ -97,7 +97,7 @@ A hands-on cybersecurity home lab project that simulates a real-world phishing a
 
 -----
 
-## ⚙️ Installation and Setup
+## Installation and Setup
 
 ### Configuring pfSense in VirtualBox
 
@@ -108,7 +108,7 @@ pfSense acts as the gateway and firewall between the attacker and victim network
 ```
 Adapter 1 (WAN):  
 Adapter 2 (LAN):  Internal Adapter 
-Adapter 3 (OPT1): Internal Adapter —
+Adapter 3 (OPT1): Internal Adapter 
 ```
 
 **Step 2: Boot pfSense and assign interfaces:**
