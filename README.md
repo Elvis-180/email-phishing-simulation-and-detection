@@ -11,6 +11,35 @@
 
 -----
 
+## Table of Contents
+* [Project Overview](#project-overview)
+* [Objectives](#objectives)
+* [Lab Architecture](#lab-architecture)
+* [Tools and Technologies](#tools-and-technologies)
+* [Lab Environment](#lab-environment)
+* [Installation and Setup](#installation-and-setup)
+* [Configuring pfSense in VirtualBox](#configuring-pfsense-in-virtualbox)
+* [Configuring pfSense Network Segmentation](#configuring-pfsense-network-segmentation)
+* [Configuring pfSense Firewall Rules](#configuring-pfsense-firewall-rules)
+* [Installing MailHog on Kali Linux](#installing-mailhog-on-kali-linux)
+* [Installing GoPhish on Kali Linux](#installing-gophish-on-kali-linux)
+* [Installing Sysmon on windows Server 2025](#installing-sysmon-on-windows-server-2025)
+* [Installing Splunk on Kali Linux](#installing-splunk-on-kali-linux)
+* [Installing Splunk Universal Forwarder on Windows Server 2025](#installing-splunk-universal-forwarder-on-windows-server-2025)
+* [Phase 1: Simulate](#phase-1-simulate)
+* [Phase 2: Detect](#phase-2-detect)
+* [Phase 3: Respond](#phase-3-respond)
+* [Screenshots](#screenshots)
+* [Lessons Learned](#lessons-learned)
+* [Indicators of Compromise (IOCs)](#indicators-of-compromise-iocs)
+* [Incident Timeline](#incident-timeline)
+* [Difficulties and Troubleshooting](#difficulties-and-troubleshooting)
+* [Skills Demonstrated](#skills-demonstrated)
+* [Legal Disclaimer](#legal-disclaimer)
+* [References](#references)
+
+---
+
 ## Project Overview
 
 A hands-on cybersecurity home lab project that simulates a real-world phishing attack from end to end. This project covers the full attack lifecycle  from crafting and delivering a phishing email, to analyzing email headers, detecting malicious activity using a SIEM, and performing structured incident response. A pfSense firewall segments the network between the attacker and victim machines, mirroring how enterprise networks are protected. Built entirely on an isolated internal network using VirtualBox, this lab mirrors how real Security Operations Centers (SOCs) detect and respond to phishing threats in enterprise environments.
