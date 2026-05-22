@@ -602,27 +602,7 @@ index=main sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
 | table _time, EventID, Image, DestIP, User
 ```
 
-**SPL Search 2: Detect Victim Connecting to Attacker:**
-
-```
-index=main sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
-| rex field=_raw "EventID>(?<EventID>\d+)<"
-| rex field=_raw "DestinationIp>(?<DestIP>[^<]+)<"
-| where EventID="3" AND DestIP="192.168.2.5"
-| table _time, EventID, DestIP
-```
-
-**SPL Search 3: Detect Suspicious Process Spawned:**
-
-```
-index=main sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
-EventID=1
-ParentImage IN ("*outlook.exe","*thunderbird.exe")
-Image IN ("*powershell.exe","*cmd.exe","*wscript.exe")
-| table _time, Computer, User, Image, ParentImage, CommandLine
-```
-
-**SPL Search 4: Detect Failed Logins After Phishing:**
+**SPL Search 2: Detect Failed Logins After Phishing:**
 
 ```
 index=main sourcetype="WinEventLog:Security"
@@ -630,18 +610,6 @@ EventCode=4625
 | table _time, Computer, Account_Name, Failure_Reason, IpAddress
 ```
 
-### Sysmon Event ID Reference
-
-|EventID|Meaning             |
-|-------|--------------------|
-|1      |Process Created     |
-|3      |Network Connection  |
-|7      |Image or DLL Loaded |
-|11     |File Created        |
-|12     |Registry Key Created|
-|22     |DNS Query           |
-
------
 
 ## Phase 3: Respond
 
