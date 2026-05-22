@@ -147,12 +147,11 @@ IPv4 Address: 192.168.2.1/24
 Save and Apply
 ```
 
-**Step 2: Configure DHCP for LAN (victim network):**
+**Step 2: Configure for LAN (victim network):**
 
 ```
-Services > DHCP Server > LAN
-Enable DHCP
-Range: 192.168.1.10 to 192.168.1.50
+Services r > LAN
+Range: 192.168.1.0/24
 Save
 ```
 
@@ -694,6 +693,67 @@ The following evidence confirmed a phishing attack occurred:
 - Verified Sysmon and Splunk Forwarder still running after restore
 - Confirmed no attacker artifacts remained on the system
 - Final Splunk search confirmed no further suspicious activity
+
+---
+
+## Screenshots
+Gophish running on terminal
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-21 225230" src="https://github.com/user-attachments/assets/2bc41464-3931-4fde-a304-05deba7fc0c6" />
+
+Mailhug running on terminal
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-21 225204" src="https://github.com/user-attachments/assets/a757fda3-7b69-4352-aa4d-4ab71526ff3b" />
+
+Users and Groups
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 032338" src="https://github.com/user-attachments/assets/c1d6b70e-6672-47a5-8e1b-6d1bd7a1f2bd" />
+
+Email Template
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 032407" src="https://github.com/user-attachments/assets/5127178a-a7c1-4581-8964-ba8b772d1499" />
+
+Landing Page
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 032432" src="https://github.com/user-attachments/assets/cef156c8-7ca5-486a-b2ee-febfe23c453a" />
+
+Sending Profile
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 032454" src="https://github.com/user-attachments/assets/3c4564d3-f344-4dde-980c-99f6aec97424" />
+
+Attack Simulation 
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 014943" src="https://github.com/user-attachments/assets/8f43c812-e26f-4108-a588-a5ccba841b30" />
+
+Victim receives email
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 015016" src="https://github.com/user-attachments/assets/fb4eacd8-ca03-4e87-93ef-917fd46b1b29" />
+
+Inputs Credentials
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-21 225805" src="https://github.com/user-attachments/assets/c963d9ca-cefc-461c-b43d-28167a1bd19b" />
+
+Phishing Attack Dashboard
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 015124" src="https://github.com/user-attachments/assets/55702f88-a59c-4526-ad84-cd46a413e871" />
+
+Gophish receives victims credentials
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 015225" src="https://github.com/user-attachments/assets/5fbe5f2d-a100-40f9-af56-f12986906bc0" />
+
+Analyzing email header
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 020814" src="https://github.com/user-attachments/assets/b3a505e5-389a-427e-b3fe-2f1df492dc3e" />
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 020841" src="https://github.com/user-attachments/assets/581c6a0b-6975-47d5-b9fc-295da4ab16b7" />
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 020859" src="https://github.com/user-attachments/assets/b5cf510b-1cc0-4b8e-b862-9798dead1840" />
+
+Wireshark Captures victims credentials
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 015333" src="https://github.com/user-attachments/assets/1a71de4d-6538-4a89-bf74-a8a7fe326137" />
+
+---
 
 #### Lessons Learned
 
