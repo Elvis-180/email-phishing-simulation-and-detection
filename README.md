@@ -668,6 +668,15 @@ The following evidence confirmed a phishing attack occurred:
 ---
 
 ## Screenshots
+Firewall Rules
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 120844" src="https://github.com/user-attachments/assets/c4150dca-c82a-43f8-b213-54806ef6f7eb" />
+
+Inputs Configuration
+
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 115934" src="https://github.com/user-attachments/assets/db05a48f-9fd0-445b-9362-8ef4646b9cd6" />
+
+
 Gophish running on terminal
 
 <img width="1920" height="1080" alt="Screenshot 2026-05-21 225230" src="https://github.com/user-attachments/assets/2bc41464-3931-4fde-a304-05deba7fc0c6" />
@@ -700,7 +709,7 @@ Victim receives email
 
 <img width="1920" height="1080" alt="Screenshot 2026-05-22 015016" src="https://github.com/user-attachments/assets/fb4eacd8-ca03-4e87-93ef-917fd46b1b29" />
 
-Inputs Credentials
+Victim Inputs Credentials
 
 <img width="1920" height="1080" alt="Screenshot 2026-05-21 225805" src="https://github.com/user-attachments/assets/c963d9ca-cefc-461c-b43d-28167a1bd19b" />
 
@@ -723,6 +732,7 @@ Analyzing email header
 Wireshark Captures victims credentials
 
 <img width="1920" height="1080" alt="Screenshot 2026-05-22 015333" src="https://github.com/user-attachments/assets/1a71de4d-6538-4a89-bf74-a8a7fe326137" />
+
 
 ---
 
