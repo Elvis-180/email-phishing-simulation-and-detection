@@ -364,17 +364,17 @@ C:\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf
 
 ```ini
 [WinEventLog://Microsoft-Windows-Sysmon/Operational]
-index = main
+index = sysmon
 sourcetype = XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
 disabled = false
 
 [WinEventLog://Security]
-index = main
+index = windws
 sourcetype = WinEventLog:Security
 disabled = false
 
 [WinEventLog://Application]
-index = main
+index = widws
 sourcetype = WinEventLog:Application
 disabled = false
 ```
