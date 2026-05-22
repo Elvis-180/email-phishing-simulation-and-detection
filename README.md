@@ -71,7 +71,7 @@ A hands-on cybersecurity home lab project that simulates a real-world phishing a
 │   │                                                          │   │
 │   │    WAN                LAN                  OPT1          │   │
 │   │                  192.168.2.1          192.168.1.1        │   │
-│   └──────┬───────────────┬───────────────────┬──────────────┘    │
+│   └──────┬───────────────┬───────────────────┬────-──────────┘   │
 │          │               │                   │                   │
 │     [Internet]    ┌──────┴──────┐     ┌──────┴──────┐            │
 │                   │ KALI LINUX  │     │ WIN SERVER  │            │
