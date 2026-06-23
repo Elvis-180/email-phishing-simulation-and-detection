@@ -12,6 +12,11 @@
 -----
 
 ## Project Report
+A full technical write-up of this simulation is available as a PDF:
+
+[ Phishing Lab Report ](./Phishing%20Lab%20Report.pdf)
+
+Covers: attack setup, detection methodology and forensic findings.
 
 -----
 
