@@ -9,6 +9,39 @@
 ![Server](https://img.shields.io/badge/Victim-Windows%20Server%202025-lightgrey)
 
 ---
+##  Table of Contents
+
+- [Project Report](#project-report)
+- [Project Overview](#project-overview)
+- [Objectives](#objectives)
+- [Lab Architecture](#lab-architecture)
+- [Tools and Technologies](#tools-and-technologies)
+- [Lab Environment](#lab-environment)
+- [Installation and Setup](#installation-and-setup)
+  - [Configuring pfSense in VirtualBox](#configuring-pfsense-in-virtualbox)
+  - [Configuring pfSense Firewall Rules](#configuring-pfsense-firewall-rules)
+  - [Creating the Malicious Batch File](#creating-the-malicious-batch-file)
+- [Phase 1 — Simulate](#phase-1--simulate)
+  - [GoPhish Configuration](#gophish-configuration)
+  - [Phase 1 Results](#phase-1-results)
+- [Phase 2 — Reverse Shell](#phase-2--reverse-shell)
+  - [Starting the Listener on Kali](#starting-the-listener-on-kali)
+- [Phase 3 — Detect](#phase-3--detect)
+  - [Email Header Analysis Using MXToolbox](#3a--email-header-analysis-using-mxtoolbox)
+  - [pfSense Firewall Detection](#3b--pfsense-firewall-detection)
+  - [Wireshark Detection](#3c--wireshark-detection)
+  - [Splunk Detection](#3d--splunk-detection)
+- [Phase 4 — Respond](#phase-4--respond)
+  - [PICERL Incident Response Framework](#picerl-incident-response-framework)
+- [Indicators of Compromise (IOCs)](#indicators-of-compromise-iocs)
+- [Incident Timeline](#incident-timeline)
+- [Challenges and Troubleshooting](#challenges-and-troubleshooting)
+- [Skills Demonstrated](#skills-demonstrated)
+- [Screenshots](#screenshots)
+- [Legal Disclaimer](#legal-disclaimer)
+- [References](#references)
+
+---
 
 ## Project Report
 A full technical write-up of this simulation is available as a PDF:
