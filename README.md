@@ -56,7 +56,7 @@ A hands-on cybersecurity home lab project that simulates a real-world phishing a
 │              │          │              │                         │
 │         [Internet]  ┌───┴──────┐  ┌──-─┴──────────┐              │
 │         Simulated   │KALI LINUX│  │ WIN SERVER    │              │
-│                     │192.168.2.5│  │ 192.168.1.1  │              │
+│                     │192.168.2.5│ │ 192.168.1.1   │              │
 │                     │(Attacker)│  │  (Victim)     │              │
 │                     │          │  │               │              │
 │                     │ GoPhish  │  │ Sysmon        │              │
@@ -133,7 +133,7 @@ OPT1 → em1  (192.168.2.1 — attacker network)
 LAN  → em2  (192.168.1.2 — victim network)
 ```
 
-**Step 3 — Access pfSense web UI from Kali:**
+**Step 3 — Access pfSense web UI :**
 
 ```
 http://192.168.2.1
