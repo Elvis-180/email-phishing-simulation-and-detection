@@ -47,41 +47,41 @@ A hands-on cybersecurity home lab project that simulates a real-world phishing a
 ┌──────────────────────────────────────────────────────────────────┐
 │                   VirtualBox Lab Environment                     │
 │                                                                  │
-│         ┌────────────────────────────────────────┐              │
-│         │            pfSense Firewall             │              │
-│         │                                         │              │
-│         │  WAN        OPT1             LAN         │              │
-│         │  DHCP   192.168.2.1      192.168.1.2    │              │
-│         └────┬──────────┬──────────────┬──────────┘              │
-│              │          │              │                          │
-│         [Internet]  ┌───┴──────┐  ┌───┴──────────┐              │
-│         Simulated   │KALI LINUX│  │ WIN SERVER   │              │
+│         ┌────────────────────────────────────────┐               │
+│         │            pfSense Firewall            │               │
+│         │                                        │               │
+│         │  WAN        OPT1             LAN       │               │
+│         │  DHCP   192.168.2.1      192.168.1.2   │               │
+│         └────┬──────────┬──────────────┬─────────┘               │
+│              │          │              │                         │
+│         [Internet]  ┌───┴──────┐  ┌──-─┴──────────┐              │
+│         Simulated   │KALI LINUX│  │ WIN SERVER    │              │
 │                     │192.168.2.5│  │ 192.168.1.1  │              │
-│                     │(Attacker)│  │  (Victim)    │              │
-│                     │          │  │              │              │
-│                     │ GoPhish  │  │ Sysmon       │              │
-│                     │ MailHog  │  │ Splunk Fwd   │              │
-│                     │ Wireshark│  │              │              │
-│                     │ Splunk   │  │              │              │
-│                     │ Netcat   │  │              │              │
-│                     └──────────┘  └──────────────┘              │
+│                     │(Attacker)│  │  (Victim)     │              │
+│                     │          │  │               │              │
+│                     │ GoPhish  │  │ Sysmon        │              │
+│                     │ MailHog  │  │ Splunk Fwd    │              │
+│                     │ Wireshark│  │               │              │
+│                     │ Splunk   │  │               │              │
+│                     │ Netcat   │  │               │              │
+│                     └──────────┘  └──────────────-┘              │
 │                                                                  │
 │  Attack Flow:                                                    │
-│  Kali (OPT1) ──▶ pfSense ──▶ Windows Server (LAN)              │
+│  Kali (OPT1) ──▶ pfSense ──▶ Windows Server (LAN)               │
 │                                                                  │
 │  Reverse Shell Flow:                                             │
-│  Windows Server ──▶ pfSense ──▶ Kali port 4444                 │
+│  Windows Server ──▶ pfSense ──▶ Kali port 4444                  │
 │                                                                  │
 │  Detection Flow:                                                 │
 │  Sysmon ──▶ Splunk Forwarder ──▶ Splunk SIEM ──▶ Alert         │
-│  Wireshark ──▶ HTTP Stream ──▶ Credentials Captured            │
-│  MXToolbox ──▶ Header Analysis ──▶ SPF DKIM DMARC Failures     │
-│  pfSense ──▶ Firewall Logs ──▶ Traffic Evidence                │
+│  Wireshark ──▶ HTTP Stream ──▶ Credentials Captured             │
+│  MXToolbox ──▶ Header Analysis ──▶ SPF DKIM DMARC Failures      │
+│  pfSense ──▶ Firewall Logs ──▶ Traffic Evidence                 │
 │                                                                  │
 │                                                                  │
 └──────────────────────────────────────────────────────────────────┘
 ```
-
+ 
 ---
 
 ##  Tools and Technologies
