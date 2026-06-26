@@ -230,72 +230,6 @@ Save and Apply
 
 ---
 
-### Installing MailHog 
-
-**Step 1 — Install Go:**
-
-```bash
-sudo apt update
-sudo apt install golang -y
-```
-
-**Step 2 — Install MailHog:**
-
-```bash
-go install github.com/mailhog/MailHog@latest
-```
-
-**Step 3 — Start MailHog:**
-
-```bash
-~/go/bin/MailHog
-```
-
-**Step 4 — Verify output:**
-
-```
-[SMTP] LISTENING on 0.0.0.0:1025
-[APIv1] LISTENING on 0.0.0.0:8025
-```
-
-**Step 5 — Access MailHog from Windows Server:**
-
-```
-http://192.168.2.5:8025
-```
-
----
-
-### Installing GoPhish 
-
-**Step 1 — Download GoPhish:**
-
-```bash
-cd ~/Desktop
-wget https://github.com/gophish/gophish/releases/download/v0.12.1/gophish-v0.12.1-linux-64bit.zip
-```
-
-**Step 2 — Unzip and prepare:**
-
-```bash
-unzip gophish-v0.12.1-linux-64bit.zip -d gophish
-cd gophish
-chmod +x gophish
-```
-
-**Step 3 — Run GoPhish:**
-
-```bash
-sudo ./gophish
-```
-
-**Step 4 — Open GoPhish dashboard:**
-
-```
-https://127.0.0.1:3333
-Username: admin
-Password: from terminal output
-```
 
 ---
 
@@ -326,112 +260,6 @@ Save as:    update.bat
 -Exec Bypass  → Bypasses execution policy
 TCPClient     → Connects back to Kali on port 4444
 iex $d        → Executes commands sent from Kali
-```
-
----
-
-### Installing Sysmon on Windows Server 2025
-
-**Step 1 — Download Sysmon from Microsoft Sysinternals**
-
-**Step 2 — Open PowerShell as Administrator:**
-
-```powershell
-cd C:\sysmon
-.\sysmon64.exe -accepteula -i
-```
-
-**Step 3 — Apply network monitoring config:**
-
-Create `C:\sysmon\sysmonconfig.xml`:
-
-```xml
-<Sysmon schemaversion="4.82">
-  <EventFiltering>
-    <RuleGroup name="" groupRelation="or">
-      <NetworkConnect onmatch="exclude">
-      </NetworkConnect>
-    </RuleGroup>
-    <RuleGroup name="" groupRelation="or">
-      <ProcessCreate onmatch="exclude">
-      </ProcessCreate>
-    </RuleGroup>
-    <RuleGroup name="" groupRelation="or">
-      <DnsQuery onmatch="exclude">
-      </DnsQuery>
-    </RuleGroup>
-  </EventFiltering>
-</Sysmon>
-```
-
-Apply config:
-
-```powershell
-.\sysmon64.exe -c C:\sysmon\sysmonconfig.xml
-Restart-Service sysmon64
-```
-
----
-
-### Installing Splunk 
-
-**Step 1 — Install Splunk:**
-
-```bash
-sudo dpkg -i splunk.deb
-sudo /opt/splunk/bin/splunk start --accept-license
-```
-
-**Step 2 — Access Splunk:**
-
-```
-http://127.0.0.1:8000
-```
-
-**Step 3 — Configure receiving port 9997:**
-
-```
-Settings > Forwarding and Receiving > Configure Receiving > 9997
-```
-
----
-
-### Installing Splunk Universal Forwarder on Windows Server 2025
-
-**Step 1 — Install with receiving indexer:**
-
-```
-Receiving Indexer: 192.168.2.5
-Port:              9997
-```
-
-**Step 2 — Create inputs.conf:**
-
-```
-C:\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf
-```
-
-```ini
-[WinEventLog://Microsoft-Windows-Sysmon/Operational]
-index = main
-sourcetype = XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
-disabled = false
-
-[WinEventLog://Security]
-index = main
-sourcetype = WinEventLog:Security
-disabled = false
-
-[WinEventLog://Application]
-index = main
-sourcetype = WinEventLog:Application
-disabled = false
-```
-
-**Step 3 — Restart forwarder:**
-
-```powershell
-Restart-Service SplunkForwarder
 ```
 
 ---
@@ -908,6 +736,21 @@ After downloading and running update.bat nothing appeared on the Kali netcat lis
 - Windows endpoint telemetry and process monitoring using Sysmon
 - Incident response documentation using the PICERL framework
 - Isolated internal lab network configuration using VirtualBox
+
+---
+
+## Screenshots
+Dashboard
+<img width="1920" height="1080" alt="Screenshot 2026-05-22 015124" src="https://github.com/user-attachments/assets/2c3b2aba-270d-4c90-a36d-a6d2233acdbb" />
+
+Firewall Rules
+<img width="1920" height="1080" alt="Screenshot 2026-05-24 000024" src="https://github.com/user-attachments/assets/b3f22f32-9d62-4c07-b4e2-b2c6fe97c4d8" />
+
+Gophish Running
+<img width="1920" height="1080" alt="Screenshot 2026-05-21 225230" src="https://github.com/user-attachments/assets/7b0c6e23-40ec-4fe2-bccb-230f13886d8a" />
+
+ Reverse Engineering taking place
+ <img width="1920" height="1080" alt="Screenshot 2026-05-23 212405" src="https://github.com/user-attachments/assets/faa108f3-f537-45c5-b971-121be4b22680" />
 
 ---
 
